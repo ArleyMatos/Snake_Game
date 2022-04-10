@@ -7,13 +7,24 @@
 int main(){
 	char tela[lim][lim];
 	cobra *snk;	
-	snk	= inicializar_cobra(); //inicia a struct 
-	tela_ini(tela,snk); //inicia a tela
-	refresh(tela,snk); 
-	frame(tela); //printa a tela
+	snk	= inicializar_cobra();  
+	tela_ini(tela,snk);
+	aum_tamanho(snk);
+	aum_tamanho(snk);
+	corpo_cobra(snk);
+	pos_cobra(snk);
+	refresh(tela,snk);
+	frame(tela);
+	/*
+	move_cobra(snk);
+	Sleep(snk->speed*2);
+	refresh(tela,snk);
+	frame(tela);
+	*/
+	
+	
 	
 	return 0;
 }
 
-//printar tela inicial 
-//adicionar dois nos na cobra dentro de tela ini
+
