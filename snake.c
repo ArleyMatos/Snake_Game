@@ -9,17 +9,23 @@ int main(){
 	cobra *snk;	
 	snk	= inicializar_cobra();  
 	tela_ini(tela,snk);
-	aum_tamanho(snk);
-	aum_tamanho(snk);
-	corpo_cobra(snk);
-	pos_cobra(snk);
 	refresh(tela,snk);
 	frame(tela);
+	Sleep(1000);
+	aum_tamanho(snk);
+	aum_tamanho(snk);
+	refresh(tela,snk);
+	frame(tela);
+	move_cobra(snk,tela);
+	
+	while(snk->dead != 1){
+		Sleep(1000);
+		refresh(tela,snk);
+		frame(tela);
+		move_cobra(snk,tela);
+		pos_cobra(snk);
+	}
 	/*
-	move_cobra(snk);
-	Sleep(snk->speed*2);
-	refresh(tela,snk);
-	frame(tela);
 	*/
 	
 	
