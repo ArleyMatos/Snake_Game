@@ -163,30 +163,45 @@ void verifica_morte(cobra *snk){
 }
 
 
-void mudar_dir(cobra *snk, int tecla){
-		tecla = getch();
-		if(tecla == 0 || tecla == 224){
-        	tecla = _getch ();
-        	switch (tecla){
-        		case 72:  // para cima 
-        			snk->move_cobra = 1;
-        			break;
-        		case 80: //para baixo
-        			snk->move_cobra = 2;
-        			break;
-				case 75: // para esquerda  
-        			snk->move_cobra = 3;
-        			break;
-				case 77: //para direita 
-        			snk->move_cobra = 4;
-        			break;			
+void verifica_tecla(cobra *snk){
+		if(!kbhit()){
+		}
+		else{
+			
+			int tecla;
+		 	tecla = getch();
+			if(tecla == 0 || tecla == 224){
+	        	tecla = _getch ();
+	        	switch (tecla){
+	        		case 72:  // para cima 
+	        			snk->move_cobra = 1;
+	        			break;
+	        		case 80: //para baixo
+	        			snk->move_cobra = 2;
+	        			break;
+					case 75: // para esquerda  
+	        			snk->move_cobra = 3;
+	        			break;
+					case 77: //para direita 
+	        			snk->move_cobra = 4;
+	        			break;			
+				}
 			}
 		}
-		else printf("\ntecla nao reconhecida\n");
     }
 
 void move_cobra(cobra *snk,char tela[lim][lim]){ // ,teclado,char tela[lim][lim]
 	no *atu;
+	atu = snk->fim;
+	printf("\n");
+			while(atu != snk->ini){
+				atu->move_no = atu->ant->move_no;
+				printf("%d",atu->move_no);
+				atu = atu->ant;
+			}
+				atu->move_no = snk->move_cobra;	
+				printf("%d",atu->move_no);
+				printf("\n");
 	atu = snk->ini;
 		while(atu!=NULL){
 				if(atu == snk->fim){
@@ -213,34 +228,8 @@ void move_cobra(cobra *snk,char tela[lim][lim]){ // ,teclado,char tela[lim][lim]
 				atu = atu->prox;	
 			}
 			verifica_morte(snk);
-//			while(atu != snk->ini){
-//				atu->move_no = atu->ant->move_no;
-//				atu = atu->ant;
-//			}
-//				atu->move_no = snk->move_cobra;	
-//				verifica_morte(snk);
 }
 	
-
-
-
-static int get_code(void)
-{
-    int ch = getch();
-    if (ch == 0 || ch == 224)
-        ch = ch + getch();
-    return ch;
-}	
-
-
-
-
-
-
-
-
-	
-
 
 
 	
