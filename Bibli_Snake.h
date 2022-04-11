@@ -9,7 +9,7 @@
 #define lim 20
 //----------------------------DECLARA�AO---------------------------------------------------------------
 typedef char caracter;
-typedef int pontuacao,tamanho,movimento,position,velocidade,game_over;
+typedef int tamanho,movimento,position,velocidade,game_over;
 
 
 typedef struct tp_no{	//estrutura de no da cobra
@@ -19,10 +19,10 @@ typedef struct tp_no{	//estrutura de no da cobra
 	movimento move_no;
 }no;
 
-typedef struct player{ //estrutura de players
-	pontuacao pontos;
-	char nome[20];
-}jogador;
+typedef struct data{ //estrutura de players
+	char nome[50];
+	int food,fx,fy;
+}dados;
 
 typedef struct snake{	//estruturas da cobra 
 	tamanho tam;
@@ -36,6 +36,15 @@ typedef struct snake{	//estruturas da cobra
 
 
 //--------------------------------INICIALIZA�AO---------------------------------------------------
+
+dados *inicializar_dados(){
+	dados *data = (dados*) malloc(sizeof(dados));
+	data->food = 0;
+	data->fx = -1;
+	data->fy = -1;
+	
+	return data;
+}
 
 no *inicializar_no(){
 	no *bloco = (no*) malloc(sizeof(no));
@@ -54,11 +63,10 @@ void aum_tamanho(cobra *snk){	//aumenta o tamnaho da cobra adicionando um no em 
 	b = inicializar_no();
 	if(snk->tam == 0){
 		snk->fim=snk->ini=b;
-		snk->tam=+1;
+		snk->tam+=1;
 		b->posx = 9;
 		b->posy = 9;		
 		b->move_no = snk->move_cobra;
-		printf("ENTROU NO IF\n");
 	}
 	else {
 		b->move_no = snk->fim->move_no;
@@ -66,29 +74,24 @@ void aum_tamanho(cobra *snk){	//aumenta o tamnaho da cobra adicionando um no em 
 			case 1:// PARA CIMA
 				b->posx = snk->fim->posx+1;
 				b->posy = snk->fim->posy;
-				printf("ENTROU NO case 1");
 				break;
 			case 2:// PARA BAIXO
 				b->posx = snk->fim->posx-1;
 				b->posy = snk->fim->posy;
-				printf("ENTROU NO case 2");
 				break;
 			case 3:// PARA O LADO ESQUERDO
 				b->posy = snk->fim->posy+1;
 				b->posx = snk->fim->posx;
-				printf("ENTROU NO case 3");
 				break;
 			case 4: // PARA O LADO DIREITO
 				b->posy = snk->fim->posy-1;
-				b->posx = snk->fim->posx;
-				printf("ENTROU NO case 4");				
+				b->posx = snk->fim->posx;			
 				break;		
 		}
 		snk->fim->prox = b;
 		b->ant = snk->fim;	
 		snk->fim = b;        
-		snk->tam=+1;
-		printf("ENTROU NO ELSE");
+		snk->tam+=1;
 	}
 }
 
@@ -102,7 +105,6 @@ cobra *inicializar_cobra(){ // cobra inicial
 	snk->speed = 500;
 	aum_tamanho(snk);
 	aum_tamanho(snk);
-	printf("\niniciou cobra\n");
 	return snk;
 }
 
@@ -118,6 +120,8 @@ void pos_cobra(cobra *snk){ // mostrar como esta o corpo da cobra em cadeia de c
 	}
 	printf("\n");
 }
+
+void fruta ()
 
 void corpo_cobra(cobra *snk){ // mostrar como esta o corpo da cobra em cadeia de char
 	no *atu;
@@ -135,7 +139,7 @@ void verificar_tam(cobra *snk){ //verifica o tamanho da cobra em inteiro
 	int cont = 0;
 	atu = snk->ini;
 	while(atu!=NULL){
-		cont=+1;
+		cont+=1;
 		atu = atu->prox;
 	}
 	printf("\n%d\n",cont);
@@ -156,10 +160,28 @@ void refresh(char tela[lim][lim], cobra *snk){ // atualiza matriz com os novos v
 
 
 void verifica_morte(cobra *snk){
+	no *atu;
+	
 	if(snk->ini->posx == 0 || snk->ini->posx == 19 || snk->ini->posy == 19 || snk->ini->posy == 0 ){
 			snk->dead = 1;
-			printf("GAME OVER PARCERO");
 		}
+	else if(snk->tam >= 5){
+		atu = snk->ini->prox; //
+		while(atu!=NULL){
+			if(snk->ini->posx == atu->posx && snk->ini->posy == atu->posy){
+				snk->dead = 1;
+			}
+			atu = atu->prox;
+		  }	
+		}
+}
+
+
+void tela_gameover(cobra *snk){
+	if(snk->dead == 1){
+		system("cls");
+		printf("\n\n		GAME OVER");
+	}
 }
 
 
@@ -187,22 +209,22 @@ void verifica_tecla(cobra *snk){
 	        			break;			
 				}
 			}
+			else if(tecla == 27){
+				snk->dead = 1;
+			}
 		}
     }
 
 void move_cobra(cobra *snk,char tela[lim][lim]){ // ,teclado,char tela[lim][lim]
 	no *atu;
 	atu = snk->fim;
-	printf("\n");
+			verifica_morte(snk);
 			while(atu != snk->ini){
 				atu->move_no = atu->ant->move_no;
-				printf("%d",atu->move_no);
 				atu = atu->ant;
 			}
 				atu->move_no = snk->move_cobra;	
-				printf("%d",atu->move_no);
-				printf("\n");
-	atu = snk->ini;
+		atu = snk->ini;
 		while(atu!=NULL){
 				if(atu == snk->fim){
 					tela[atu->posx][atu->posy] = ' ';
@@ -210,19 +232,15 @@ void move_cobra(cobra *snk,char tela[lim][lim]){ // ,teclado,char tela[lim][lim]
 				switch (atu->move_no){
 					case 1:// PARA CIMA
 						atu->posx = atu->posx-1;
-						printf("ENTROU NO case cima");
 						break;
 					case 2:// PARA BAIXO
 						atu->posx= atu->posx+1;
-						printf("ENTROU NO case baixo ");
 						break;
 					case 3:// PARA O LADO ESQUERDO
 						atu->posy= atu->posy-1;
-						printf("ENTROU NO case esquerdo");
 						break;
 					case 4: // PARA O LADO DIREITO
-						atu->posy= atu->posy+1;
-						printf("ENTROU NO case direito");				
+						atu->posy= atu->posy+1;				
 						break;		
 				}
 				atu = atu->prox;	
