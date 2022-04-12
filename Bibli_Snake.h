@@ -19,9 +19,15 @@ typedef struct tp_no{	//estrutura de no da cobra
 	movimento move_no;
 }no;
 
+typedef struct fruit{
+	position food,fx,fy;
+	char fc;
+}fruta;
+
 typedef struct data{ //estrutura de players
-	char nome[50];
-	int food,fx,fy;
+	char nome[20];
+	int pontos,menu,opcao;
+	
 }dados;
 
 typedef struct snake{	//estruturas da cobra 
@@ -39,11 +45,20 @@ typedef struct snake{	//estruturas da cobra
 
 dados *inicializar_dados(){
 	dados *data = (dados*) malloc(sizeof(dados));
-	data->food = 0;
-	data->fx = -1;
-	data->fy = -1;
-	
+	data->pontos = 0;
+	strcpy(data->nome,"SEM NOME");
+	data->menu = 0;
 	return data;
+}
+
+fruta *inicializar_fruta(){
+	fruta *f = (fruta*) malloc(sizeof(fruta));
+//	srand( (unsigned)time(NULL) );
+	f->fc = '*';
+	f->food = 1;
+	f->fx = ((rand() % 18)+1);
+	f->fy = ((rand() % 18)+1);
+	return f;
 }
 
 no *inicializar_no(){
@@ -121,7 +136,33 @@ void pos_cobra(cobra *snk){ // mostrar como esta o corpo da cobra em cadeia de c
 	printf("\n");
 }
 
-void fruta ()
+
+void menu(dados *d){
+	if(!kbhit()){
+		}
+		else{
+			
+			int tecla;
+		 	tecla = getch();
+			if(tecla == 0 || tecla == 224){
+	        	tecla = _getch ();
+	        	switch (tecla){
+	        		case 72:  // para cima 
+	        				snk->move_cobra = 1;
+	        			break;
+	        		case 80: //para baixo
+	        				snk->move_cobra = 2;
+	        			break;
+					case 75: // para esquerda  
+	        				snk->move_cobra = 3;
+	        			break;
+					case 77: //para direita 
+	        				snk->move_cobra = 4;	
+	        			break;			
+				}
+			}
+}
+
 
 void corpo_cobra(cobra *snk){ // mostrar como esta o corpo da cobra em cadeia de char
 	no *atu;
@@ -149,12 +190,15 @@ void verificar_tam(cobra *snk){ //verifica o tamanho da cobra em inteiro
 // para cima 1 ; baixo 2 ; lado L 3; lado D 4
 
 
-void refresh(char tela[lim][lim], cobra *snk){ // atualiza matriz com os novos valores da cobra 
+void refresh(char tela[lim][lim], cobra *snk,fruta *f){ // atualiza matriz com os novos valores da cobra 
 	no *atu;
 	atu = snk->ini;
 	while(atu!=NULL){
 		tela[atu->posx][atu->posy] = atu->charc; 
 		atu=atu->prox;
+	}
+	if(f->food == 1){
+	tela[f->fx][f->fy] = f->fc;
 	}
 }
 
@@ -165,7 +209,7 @@ void verifica_morte(cobra *snk){
 	if(snk->ini->posx == 0 || snk->ini->posx == 19 || snk->ini->posy == 19 || snk->ini->posy == 0 ){
 			snk->dead = 1;
 		}
-	else if(snk->tam >= 5){
+	else {
 		atu = snk->ini->prox; //
 		while(atu!=NULL){
 			if(snk->ini->posx == atu->posx && snk->ini->posy == atu->posy){
@@ -185,7 +229,7 @@ void tela_gameover(cobra *snk){
 }
 
 
-void verifica_tecla(cobra *snk){
+void verifica_tecla(cobra *snk,dados *d){
 		if(!kbhit()){
 		}
 		else{
@@ -196,16 +240,16 @@ void verifica_tecla(cobra *snk){
 	        	tecla = _getch ();
 	        	switch (tecla){
 	        		case 72:  // para cima 
-	        			snk->move_cobra = 1;
+	        				snk->move_cobra = 1;
 	        			break;
 	        		case 80: //para baixo
-	        			snk->move_cobra = 2;
+	        				snk->move_cobra = 2;
 	        			break;
 					case 75: // para esquerda  
-	        			snk->move_cobra = 3;
+	        				snk->move_cobra = 3;
 	        			break;
 					case 77: //para direita 
-	        			snk->move_cobra = 4;
+	        				snk->move_cobra = 4;	
 	        			break;			
 				}
 			}
@@ -213,9 +257,21 @@ void verifica_tecla(cobra *snk){
 				snk->dead = 1;
 			}
 		}
+		printf("%d",snk->tam);
     }
+    
+void verificar_fruta(cobra *snk,fruta *f){
+	if(snk->ini->posx == f->fx && snk->ini->posy == f->fy ){
+		aum_tamanho(snk);
+		f->food = 0;
+	}
+	if(f->food == 0){
+		free(f);
+		f = inicializar_fruta();
+	}
+}    
 
-void move_cobra(cobra *snk,char tela[lim][lim]){ // ,teclado,char tela[lim][lim]
+void move_cobra(cobra *snk,char tela[lim][lim],fruta *f){ // ,teclado,char tela[lim][lim]
 	no *atu;
 	atu = snk->fim;
 			verifica_morte(snk);
@@ -244,8 +300,10 @@ void move_cobra(cobra *snk,char tela[lim][lim]){ // ,teclado,char tela[lim][lim]
 						break;		
 				}
 				atu = atu->prox;	
+				verifica_morte(snk);
 			}
 			verifica_morte(snk);
+			verificar_fruta(snk,f);
 }
 	
 

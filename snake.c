@@ -27,30 +27,29 @@ int main(){
 	char tela[lim][lim];
 	cobra *snk;	
 	dados *data;
+	fruta *f;
+	f = inicializar_fruta();
 	data = inicializar_dados();
 	snk	= inicializar_cobra();  
 	tela_ini(tela,snk);
-	refresh(tela,snk);
+	refresh(tela,snk,f);
 	frame(tela);
 	Sleep(2);
-	aum_tamanho(snk);
-	aum_tamanho(snk);
-	aum_tamanho(snk);
-	aum_tamanho(snk);
-	aum_tamanho(snk);
-	refresh(tela,snk);
+
+	refresh(tela,snk,f);
 	frame(tela);
 	frame(tela);
 	Sleep(10);
-	move_cobra(snk,tela);
+	move_cobra(snk,tela,f);
 	while(snk->dead != 1){
 		Sleep(10);
-		refresh(tela,snk);
+		refresh(tela,snk,f);
 		frame(tela);
-		verifica_tecla(snk);
-		move_cobra(snk,tela);
+		verifica_tecla(snk,data);
+		move_cobra(snk,tela,f);
 	}
 	tela_gameover(snk);
+	Sleep(100);
 	/*
 	*/
 	
@@ -58,5 +57,4 @@ int main(){
 	
 	return 0;
 }
-
 
