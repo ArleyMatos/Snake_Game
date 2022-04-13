@@ -20,36 +20,45 @@ void InitConsole(int ForgC, int BackC)
     return;
 }   
 
-int main(){
-	SetConsoleTitle("GAME SNAKE"); 
-	InitConsole(10, 0);
-	int x=0;
+int main(){	
 	char tela[lim][lim];
 	cobra *snk;	
-	dados *data;
 	fruta *f;
 	f = inicializar_fruta();
-	data = inicializar_dados();
 	snk	= inicializar_cobra();  
+	SetConsoleTitle("GAME SNAKE"); 
+	InitConsole(10, 0);
+	int opcao;
+	painel *painel;
+	painel = inicializar_menu();
+	while(painel->menu_ini == 0){
+	menu(painel);
+	verificar_menu(painel);
+	}
+	if(painel->menu_ini == 1){	
 	tela_ini(tela,snk);
 	refresh(tela,snk,f);
 	frame(tela);
 	Sleep(2);
-
 	refresh(tela,snk,f);
 	frame(tela);
 	frame(tela);
 	Sleep(10);
 	move_cobra(snk,tela,f);
-	while(snk->dead != 1){
+	}
+	while(snk->dead != 1 && painel->menu_ini == 1){
 		Sleep(10);
 		refresh(tela,snk,f);
 		frame(tela);
-		verifica_tecla(snk,data);
+		verifica_tecla(snk,painel);
 		move_cobra(snk,tela,f);
 	}
-	tela_gameover(snk);
-	Sleep(100);
+	if(snk->dead == 1){
+		tela_gameover(snk);
+		Sleep(100);
+		painel->menu_ini = 0;
+		}
+	
 	/*
 	*/
 	

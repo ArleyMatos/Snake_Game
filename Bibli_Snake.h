@@ -24,11 +24,20 @@ typedef struct fruit{
 	char fc;
 }fruta;
 
-typedef struct data{ //estrutura de players
-	char nome[20];
-	int pontos,menu,opcao;
+typedef struct panel{ //estrutura de players
+	int menu_ini,opcao,aux;
 	
-}dados;
+}painel;
+
+typedef int tp_item;
+
+typedef struct tp_no_arvore{
+	struct tp_no_arvore *esq;
+	tp_item info;
+	struct tp_no_arvore *dir;
+}tp_no_arv;
+
+
 
 typedef struct snake{	//estruturas da cobra 
 	tamanho tam;
@@ -40,15 +49,34 @@ typedef struct snake{	//estruturas da cobra
 	game_over dead;
 }cobra;
 
+typedef tp_no_arv *tp_arvore;
 
 //--------------------------------INICIALIZAï¿½AO---------------------------------------------------
 
-dados *inicializar_dados(){
-	dados *data = (dados*) malloc(sizeof(dados));
-	data->pontos = 0;
-	strcpy(data->nome,"SEM NOME");
-	data->menu = 0;
-	return data;
+tp_arvore inicializa_arvore(){
+	return NULL;
+}
+
+int arvore_vazia(tp_arvore raiz){
+	if(raiz==NULL) return 1;
+	else return 0;
+}
+
+tp_no_arv *aloca_no(){ //aloca e retorna o endereço
+	tp_no_arv *no;
+	no=(tp_no_arv*)malloc(sizeof(tp_no_arv));
+	return no;
+
+}
+
+
+painel *inicializar_menu(){
+	painel *menu = (painel*) malloc(sizeof(painel));
+	menu->opcao = 0;
+//	strcpy(data->nome,"SEM NOME");
+	menu->menu_ini = 0;
+	menu->aux = 1;
+	return menu;
 }
 
 fruta *inicializar_fruta(){
@@ -137,31 +165,93 @@ void pos_cobra(cobra *snk){ // mostrar como esta o corpo da cobra em cadeia de c
 }
 
 
-void menu(dados *d){
-	if(!kbhit()){
+void regras(painel *m){
+	int x;
+	system("cls");
+	printf("Tecla ascendente: Para cima\nTecla descendente: Para baixo\nTecla esquerda: Esquerda\nTecla direita: Direita\nESQ para sair durante o jogo\n\n\nClique 1 para voltar");
+
+	x = getch(); 
+	while(x!=49){
+		printf("\nDigite 1 para sair ");
+		x = getch();
+	} 
+	if(x==49){
+		m->menu_ini = 0;
+	}	
+}
+
+
+void verificar_menu(painel *m){
+	switch (m->menu_ini){
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			regras(m);	
+			break;
 		}
-		else{
-			
-			int tecla;
+}
+
+
+
+
+
+void menu(painel *m){
+	char auxc[20],opcoes[4][25] = 
+	{"1. Iniciar jogo","2. Pontuacoes","3. Regras", "4. Sair do jogo"};
+	int tecla,x,i,tam;
+	while(m->aux == 1){
+		for(x=0;x<4;x++){
+			printf("%s\n",opcoes[x]);
+		}
+		m->aux = 0;				
+	}
 		 	tecla = getch();
-			if(tecla == 0 || tecla == 224){
-	        	tecla = _getch ();
 	        	switch (tecla){
-	        		case 72:  // para cima 
-	        				snk->move_cobra = 1;
+	        		case 49:  // numero 1 
+	        			m->opcao = 0;	
 	        			break;
-	        		case 80: //para baixo
-	        				snk->move_cobra = 2;
+	        		case 50: // numero 2 
+	        			m->opcao = 1;	
 	        			break;
-					case 75: // para esquerda  
-	        				snk->move_cobra = 3;
+					case 51: // numero 3  
+	        			m->opcao = 2;	
 	        			break;
-					case 77: //para direita 
-	        				snk->move_cobra = 4;	
-	        			break;			
+					case 52: // numero 4 
+	        			m->opcao = 3;	
+	        			break;	
+					case 13: // ENTER  
+	       				 printf("%d",m->opcao);
+							switch (m->opcao){
+							case 0:
+								m->menu_ini = 1;
+								break;
+							case 1:
+							 	 m->menu_ini = 2;
+							 	 break;
+							case 2:
+								m->menu_ini = 3;
+								break;
+							case 3: 
+								m->menu_ini = 4;
+								 break;
+						 }	
+														
+				}
+				system("cls");
+				tam = strlen(opcoes[m->opcao]);
+				for(x=0;x<4;x++){
+					if(x == m->opcao){
+						for(i=0; i<tam; i++){         	   // Converte cada caracter de Str
+					    opcoes[x][i] = toupper (opcoes[x][i]);  // para maiusculas
+						}
+					    printf("%s\n",opcoes[x]);
+					}
+					else
+						printf("%s\n",opcoes[x]);
 				}
 			}
-}
 
 
 void corpo_cobra(cobra *snk){ // mostrar como esta o corpo da cobra em cadeia de char
@@ -229,7 +319,7 @@ void tela_gameover(cobra *snk){
 }
 
 
-void verifica_tecla(cobra *snk,dados *d){
+void verifica_tecla(cobra *snk,painel *m){
 		if(!kbhit()){
 		}
 		else{
@@ -255,6 +345,7 @@ void verifica_tecla(cobra *snk,dados *d){
 			}
 			else if(tecla == 27){
 				snk->dead = 1;
+				m->menu_ini = 0;
 			}
 		}
 		printf("%d",snk->tam);
@@ -264,7 +355,7 @@ void verificar_fruta(cobra *snk,fruta *f){
 	if(snk->ini->posx == f->fx && snk->ini->posy == f->fy ){
 		aum_tamanho(snk);
 		f->food = 0;
-	}
+	}    
 	if(f->food == 0){
 		free(f);
 		f = inicializar_fruta();
@@ -334,6 +425,61 @@ void frame(char tela[lim][lim]){
 		}
 		printf("\n");
 	} 
+}
+
+
+
+
+
+int insere_no(tp_arvore *raiz,tp_item e){
+	tp_no_arv *pai=NULL,*novo,*p; //*p=ponteiro auxiliar
+	novo=aloca_no(); //cria um novo elemento e coloca o endereço dele no novo
+	if(!novo) return 0; //não deu para alocar (novo==null)
+	
+	novo->info=e;
+	novo->esq=NULL;
+	novo->dir=NULL;
+	p=*raiz;
+	
+	while(p!=NULL){
+		//busca a posição onde será inserido o novo nó
+		pai=p;
+		if (e<p->info) p=p->esq;
+		else p=p->dir;
+	}
+	
+	if(pai!=NULL){
+		if (e<pai->info) pai->esq=novo;
+		else pai->dir=novo;
+	}
+	else *raiz=novo;
+	
+	printf("%d",novo->info);
+	return 1;
+}
+
+void pre_ordem(tp_no_arv *p){
+	if (p!=NULL){
+		printf("\n%d\n", p->info);
+		pre_ordem(p->esq);
+		pre_ordem(p->dir);
+	}
+}
+
+void em_ordem (tp_no_arv *p){
+	if (p!=NULL){
+		em_ordem(p->esq);
+		printf("\n%d\n",p->info);
+		em_ordem(p->dir);
+	}
+}
+
+void pos_ordem (tp_no_arv *p){
+	if (p!=NULL){
+		pos_ordem(p->esq);
+		pos_ordem(p->dir);
+		printf("\n%d\n",p->info);
+	}
 }
 	
 	
