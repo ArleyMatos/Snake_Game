@@ -33,13 +33,12 @@ int main(){
 	int opcao;
 	painel *painel;
 	painel = inicializar_menu();
-	name nome[limname] = {"Arley"};
 	
 	while(painel->menu_ini != -1){	
 
 		while(painel->menu_ini == 0){
 			menu(painel,&arvore);
-			verificar_menu(painel);
+			verificar_menu(painel,&arvore);
 		}
 		if(painel->menu_ini == 1){
 			printf("Digite seu nome : \n");

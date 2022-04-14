@@ -84,7 +84,7 @@ painel *inicializar_menu(){
 
 fruta *inicializar_fruta(){
 	fruta *f = (fruta*) malloc(sizeof(fruta));
-//	srand( (unsigned)time(NULL) );
+	srand( (unsigned)time(NULL) );
 	f->fc = '*';
 	f->food = 1;
 	f->fx = ((rand() % 18)+1);
@@ -156,6 +156,30 @@ cobra *inicializar_cobra(){ // cobra inicial
 
 //--------------------------FUNCOES-----------------------------------------------------------------
 
+void pre_ordem(tp_no_arv *p){
+	if (p!=NULL){
+		printf("\n%d --- %s\n", p->pontos, p->nome);
+		pre_ordem(p->esq);
+		pre_ordem(p->dir);
+	}
+}
+
+void em_ordem (tp_no_arv *p){
+	if (p!=NULL){
+		em_ordem(p->esq);
+		printf("\n%d --- %s\n", p->pontos, p->nome);
+		em_ordem(p->dir);
+	}
+}
+
+void pos_ordem (tp_no_arv *p){
+	if (p!=NULL){
+		pos_ordem(p->esq);
+		pos_ordem(p->dir);
+		printf("\n%d --- %s\n", p->pontos, p->nome);
+	}
+}
+
 void pos_cobra(cobra *snk){ // mostrar como esta o corpo da cobra em cadeia de char
 	no *atu;
 	atu = snk->ini;
@@ -184,11 +208,28 @@ void regras(painel *m){
 }
 
 
-void verificar_menu(painel *m){
+void pontuacoes(painel *m, tp_arvore *arv){
+	int x;
+	system("cls");
+	pre_ordem(arv);
+	printf("Clique 1 para voltar");
+
+	x = getch(); 
+	while(x!=49){
+		printf("\nDigite 1 para sair ");
+		x = getch();
+	} 
+	if(x==49){
+		m->menu_ini = 0;
+	}	
+}
+
+void verificar_menu(painel *m,tp_arvore *arv){
 	switch (m->menu_ini){
 		case 1:
 			break;
 		case 2:
+			pontuacoes(m,arv);
 			break;
 		case 3:
 			regras(m);	
@@ -226,27 +267,15 @@ void menu(painel *m, tp_arvore *arv){
 	        			m->opcao = 3;	
 	        			break;	
 					case 13: // ENTER  
-	       				 printf("%d",m->opcao);
 							switch (m->opcao){
 							case 0:
 								m->menu_ini = 1;
 								break;
 							case 1:
 							 	m->menu_ini = 2;
-							 	int x;
+							 	
 								system("cls");
 								
-								printf("\n\n\n	Clique 1 para voltar");
-							 	pre_ordem(arv);
-								x = getch(); 
-							
-									while(x!=49){
-										printf("\nDigite 1 para sair ");
-										x = getch();
-									} 
-									if(x==49){
-										m->menu_ini = 0;
-									}
 								  break;
 							case 2:
 								m->menu_ini = 3;
@@ -332,29 +361,7 @@ void verifica_morte(cobra *snk){
 }
 
 
-void pre_ordem(tp_no_arv *p){
-	if (p!=NULL){
-		printf("\n%d --- %s\n", p->pontos, p->nome);
-		pre_ordem(p->esq);
-		pre_ordem(p->dir);
-	}
-}
 
-void em_ordem (tp_no_arv *p){
-	if (p!=NULL){
-		em_ordem(p->esq);
-		printf("\n%d --- %s\n", p->pontos, p->nome);
-		em_ordem(p->dir);
-	}
-}
-
-void pos_ordem (tp_no_arv *p){
-	if (p!=NULL){
-		pos_ordem(p->esq);
-		pos_ordem(p->dir);
-		printf("\n%d --- %s\n", p->pontos, p->nome);
-	}
-}
 	
 
 
@@ -479,12 +486,12 @@ void frame(char tela[lim][lim]){
 
 
 
-int insere_no(tp_arvore *raiz,name nome[limname], pontuacao points){
+int insere_no(tp_arvore *raiz,name jogador[limname], pontuacao points){
 	tp_no_arv *pai=NULL,*novo,*p; //*p=ponteiro auxiliar
 	novo=aloca_no(); //cria um novo elemento e coloca o endereço dele no novo
 	if(!novo) return 0; //não deu para alocar (novo==null)
 	
-	strcpy(novo->nome,nome);
+	strcpy(novo->nome,jogador);
 	novo->pontos = points;
 	novo->esq=NULL;
 	novo->dir=NULL;
