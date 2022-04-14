@@ -7,9 +7,10 @@
 
 
 #define lim 20
+#define limname 30
 //----------------------------DECLARAï¿½AO---------------------------------------------------------------
 typedef char caracter;
-typedef int tamanho,movimento,position,velocidade,game_over;
+typedef int pontuacao,tamanho,movimento,position,velocidade,game_over;
 typedef char name;
 
 
@@ -35,6 +36,7 @@ typedef struct panel{ //estrutura de players
 typedef struct tp_no_arvore{
 	struct tp_no_arvore *esq;
 	name nome[30];
+	pontuacao pontos;
 	struct tp_no_arvore *dir;
 }tp_no_arv;
 
@@ -64,9 +66,10 @@ int arvore_vazia(tp_arvore raiz){
 }
 
 tp_no_arv *aloca_no(){ //aloca e retorna o endereço
-	tp_no_arv *no;
-	no=(tp_no_arv*)malloc(sizeof(tp_no_arv));
-	return no;
+	tp_no_arv *noarv;
+	noarv =(tp_no_arv*)malloc(sizeof(tp_no_arv));
+	strcpy(noarv->nome,"SEM NOME");
+	return noarv;
 
 }
 
@@ -74,7 +77,6 @@ tp_no_arv *aloca_no(){ //aloca e retorna o endereço
 painel *inicializar_menu(){
 	painel *menu = (painel*) malloc(sizeof(painel));
 	menu->opcao = 0;
-//	strcpy(data->nome,"SEM NOME");
 	menu->menu_ini = 0;
 	menu->aux = 1;
 	return menu;
@@ -196,11 +198,10 @@ void verificar_menu(painel *m){
 
 
 
-void pontuacoes()
 
 
 
-void menu(painel *m){
+void menu(painel *m, tp_arvore *arv){
 	char auxc[20],opcoes[4][25] = 
 	{"1. Iniciar jogo","2. Pontuacoes","3. Regras", "4. Sair do jogo"};
 	int tecla,x,i,tam;
@@ -231,8 +232,22 @@ void menu(painel *m){
 								m->menu_ini = 1;
 								break;
 							case 1:
-							 	 m->menu_ini = 2;
-							 	 break;
+							 	m->menu_ini = 2;
+							 	int x;
+								system("cls");
+								
+								printf("\n\n\n	Clique 1 para voltar");
+							 	pre_ordem(arv);
+								x = getch(); 
+							
+									while(x!=49){
+										printf("\nDigite 1 para sair ");
+										x = getch();
+									} 
+									if(x==49){
+										m->menu_ini = 0;
+									}
+								  break;
 							case 2:
 								m->menu_ini = 3;
 								break;
@@ -317,8 +332,35 @@ void verifica_morte(cobra *snk){
 }
 
 
-void tela_gameover(cobra *snk){
+void pre_ordem(tp_no_arv *p){
+	if (p!=NULL){
+		printf("\n%d --- %s\n", p->pontos, p->nome);
+		pre_ordem(p->esq);
+		pre_ordem(p->dir);
+	}
+}
+
+void em_ordem (tp_no_arv *p){
+	if (p!=NULL){
+		em_ordem(p->esq);
+		printf("\n%d --- %s\n", p->pontos, p->nome);
+		em_ordem(p->dir);
+	}
+}
+
+void pos_ordem (tp_no_arv *p){
+	if (p!=NULL){
+		pos_ordem(p->esq);
+		pos_ordem(p->dir);
+		printf("\n%d --- %s\n", p->pontos, p->nome);
+	}
+}
+	
+
+
+void tela_gameover(cobra *snk,tp_arvore *raiz, name nome[limname]){
 	if(snk->dead == 1){
+		insere_no(raiz,nome,snk->tam);
 		system("cls");
 		printf("\n\n		GAME OVER       \n\n\n		Pressione qualquer tecla\n\n\n");
 	}
@@ -437,12 +479,13 @@ void frame(char tela[lim][lim]){
 
 
 
-int insere_no(tp_arvore *raiz,tp_item e){
+int insere_no(tp_arvore *raiz,name nome[limname], pontuacao points){
 	tp_no_arv *pai=NULL,*novo,*p; //*p=ponteiro auxiliar
 	novo=aloca_no(); //cria um novo elemento e coloca o endereço dele no novo
 	if(!novo) return 0; //não deu para alocar (novo==null)
 	
-	novo->info=e;
+	strcpy(novo->nome,nome);
+	novo->pontos = points;
 	novo->esq=NULL;
 	novo->dir=NULL;
 	p=*raiz;
@@ -450,44 +493,19 @@ int insere_no(tp_arvore *raiz,tp_item e){
 	while(p!=NULL){
 		//busca a posição onde será inserido o novo nó
 		pai=p;
-		if (e<p->info) p=p->esq;
+		if (points<p->pontos) p=p->esq;
 		else p=p->dir;
 	}
 	
 	if(pai!=NULL){
-		if (e<pai->info) pai->esq=novo;
+		if (points<pai->pontos) pai->esq=novo;
 		else pai->dir=novo;
 	}
 	else *raiz=novo;
 	
-	printf("%d",novo->info);
 	return 1;
 }
 
-void pre_ordem(tp_no_arv *p){
-	if (p!=NULL){
-		printf("\n%d\n", p->info);
-		pre_ordem(p->esq);
-		pre_ordem(p->dir);
-	}
-}
-
-void em_ordem (tp_no_arv *p){
-	if (p!=NULL){
-		em_ordem(p->esq);
-		printf("\n%d\n",p->info);
-		em_ordem(p->dir);
-	}
-}
-
-void pos_ordem (tp_no_arv *p){
-	if (p!=NULL){
-		pos_ordem(p->esq);
-		pos_ordem(p->dir);
-		printf("\n%d\n",p->info);
-	}
-}
-	
 	
 	
 #endif	

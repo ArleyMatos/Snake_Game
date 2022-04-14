@@ -21,7 +21,7 @@ void InitConsole(int ForgC, int BackC)
 }   
 
 int main(){	
-	char tela[lim][lim];
+	char tela[lim][lim], jogador[limname];
 	tp_arvore arvore;
 	arvore=inicializa_arvore();
 	cobra *snk;	
@@ -33,40 +33,41 @@ int main(){
 	int opcao;
 	painel *painel;
 	painel = inicializar_menu();
+	name nome[limname] = {"Arley"};
 	
-	while(painel->menu_ini != -1){
-		
-		
-	while(painel->menu_ini == 0){
-		menu(painel);
-		verificar_menu(painel);
-	}
-	if(painel->menu_ini == 1){
-		
-		snk = inicializar_cobra();	
-		tela_ini(tela,snk);
-		refresh(tela,snk,f);
-		frame(tela);
-		Sleep(20);
-		move_cobra(snk,tela,f);
-	}
-	while(snk->dead != 1 && painel->menu_ini == 1){
-		Sleep(10);
-		refresh(tela,snk,f);
-		frame(tela);
-		verifica_tecla(snk,painel);
-		move_cobra(snk,tela,f);
-	}
-	if(snk->dead == 1){
-		tela_gameover(snk);
-		Sleep(100);
-		painel->menu_ini = 0;
+	while(painel->menu_ini != -1){	
+
+		while(painel->menu_ini == 0){
+			menu(painel,&arvore);
+			verificar_menu(painel);
 		}
-		
-		
-		
-		
-}
+		if(painel->menu_ini == 1){
+			printf("Digite seu nome : \n");
+			scanf("%s", &jogador);
+			snk = inicializar_cobra();	
+			tela_ini(tela,snk);
+			refresh(tela,snk,f);
+			frame(tela);
+			Sleep(20);
+			move_cobra(snk,tela,f);
+		}
+		while(snk->dead != 1 && painel->menu_ini == 1){
+			Sleep(10);
+			refresh(tela,snk,f);
+			frame(tela);
+			verifica_tecla(snk,painel);
+			move_cobra(snk,tela,f);
+		}
+		if(snk->dead == 1){
+			tela_gameover(snk,&arvore, jogador);
+			Sleep(100);
+			painel->menu_ini = 0;
+			}
+			
+			
+			
+			
+	}
 		
 		
 		
