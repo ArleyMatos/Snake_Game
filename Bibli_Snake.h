@@ -10,6 +10,7 @@
 //----------------------------DECLARA�AO---------------------------------------------------------------
 typedef char caracter;
 typedef int tamanho,movimento,position,velocidade,game_over;
+typedef char name;
 
 
 typedef struct tp_no{	//estrutura de no da cobra
@@ -29,11 +30,11 @@ typedef struct panel{ //estrutura de players
 	
 }painel;
 
-typedef int tp_item;
+
 
 typedef struct tp_no_arvore{
 	struct tp_no_arvore *esq;
-	tp_item info;
+	name nome[30];
 	struct tp_no_arvore *dir;
 }tp_no_arv;
 
@@ -195,6 +196,8 @@ void verificar_menu(painel *m){
 
 
 
+void pontuacoes()
+
 
 
 void menu(painel *m){
@@ -234,7 +237,10 @@ void menu(painel *m){
 								m->menu_ini = 3;
 								break;
 							case 3: 
-								m->menu_ini = 4;
+								system("cls");
+								printf("\n	VOCE SAIU DO JOGO	\n");
+								Sleep(1000);
+								m->menu_ini = -1;
 								 break;
 						 }	
 														
@@ -314,7 +320,7 @@ void verifica_morte(cobra *snk){
 void tela_gameover(cobra *snk){
 	if(snk->dead == 1){
 		system("cls");
-		printf("\n\n		GAME OVER");
+		printf("\n\n		GAME OVER       \n\n\n		Pressione qualquer tecla\n\n\n");
 	}
 }
 

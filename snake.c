@@ -22,6 +22,8 @@ void InitConsole(int ForgC, int BackC)
 
 int main(){	
 	char tela[lim][lim];
+	tp_arvore arvore;
+	arvore=inicializa_arvore();
 	cobra *snk;	
 	fruta *f;
 	f = inicializar_fruta();
@@ -31,20 +33,22 @@ int main(){
 	int opcao;
 	painel *painel;
 	painel = inicializar_menu();
+	
+	while(painel->menu_ini != -1){
+		
+		
 	while(painel->menu_ini == 0){
-	menu(painel);
-	verificar_menu(painel);
+		menu(painel);
+		verificar_menu(painel);
 	}
-	if(painel->menu_ini == 1){	
-	tela_ini(tela,snk);
-	refresh(tela,snk,f);
-	frame(tela);
-	Sleep(2);
-	refresh(tela,snk,f);
-	frame(tela);
-	frame(tela);
-	Sleep(10);
-	move_cobra(snk,tela,f);
+	if(painel->menu_ini == 1){
+		
+		snk = inicializar_cobra();	
+		tela_ini(tela,snk);
+		refresh(tela,snk,f);
+		frame(tela);
+		Sleep(20);
+		move_cobra(snk,tela,f);
 	}
 	while(snk->dead != 1 && painel->menu_ini == 1){
 		Sleep(10);
@@ -58,6 +62,27 @@ int main(){
 		Sleep(100);
 		painel->menu_ini = 0;
 		}
+		
+		
+		
+		
+}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	
+	
 	
 	/*
 	*/
