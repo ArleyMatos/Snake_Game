@@ -65,7 +65,7 @@ int arvore_vazia(tp_arvore raiz){
 	else return 0;
 }
 
-tp_no_arv *aloca_no(){ //aloca e retorna o endereço
+tp_no_arv *aloca_no(){ //aloca e retorna o endereï¿½o
 	tp_no_arv *noarv;
 	noarv =(tp_no_arv*)malloc(sizeof(tp_no_arv));
 	strcpy(noarv->nome,"SEM NOME");
@@ -138,6 +138,7 @@ void aum_tamanho(cobra *snk){	//aumenta o tamnaho da cobra adicionando um no em 
 		b->ant = snk->fim;	
 		snk->fim = b;        
 		snk->tam+=1;
+		snk->speed -= 15;
 	}
 }
 
@@ -148,7 +149,7 @@ cobra *inicializar_cobra(){ // cobra inicial
 	snk->fim = NULL;
 	snk->tam = 0;
 	snk->move_cobra = 1;
-	snk->speed = 500;
+	snk->speed = 200;
 	aum_tamanho(snk);
 	aum_tamanho(snk);
 	return snk;
@@ -403,7 +404,8 @@ void verifica_tecla(cobra *snk,painel *m){
 				m->menu_ini = 0;
 			}
 		}
-		printf("%d",snk->tam);
+		printf("%d\n",snk->tam);
+		printf("%d",snk->speed);
     }
     
 void verificar_fruta(cobra *snk,fruta *f){
@@ -488,8 +490,8 @@ void frame(char tela[lim][lim]){
 
 int insere_no(tp_arvore *raiz,name jogador[limname], pontuacao points){
 	tp_no_arv *pai=NULL,*novo,*p; //*p=ponteiro auxiliar
-	novo=aloca_no(); //cria um novo elemento e coloca o endereço dele no novo
-	if(!novo) return 0; //não deu para alocar (novo==null)
+	novo=aloca_no(); //cria um novo elemento e coloca o endereï¿½o dele no novo
+	if(!novo) return 0; //nï¿½o deu para alocar (novo==null)
 	
 	strcpy(novo->nome,jogador);
 	novo->pontos = points;
@@ -498,7 +500,7 @@ int insere_no(tp_arvore *raiz,name jogador[limname], pontuacao points){
 	p=*raiz;
 	
 	while(p!=NULL){
-		//busca a posição onde será inserido o novo nó
+		//busca a posiï¿½ï¿½o onde serï¿½ inserido o novo nï¿½
 		pai=p;
 		if (points<p->pontos) p=p->esq;
 		else p=p->dir;
