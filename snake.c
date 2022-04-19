@@ -47,11 +47,11 @@ int main(){
 			tela_ini(tela,snk);
 			refresh(tela,snk,f);
 			frame(tela);
-			Sleep(20);
+			Sleep(100);
 			move_cobra(snk,tela,f);
 		}
 		while(snk->dead != 1 && painel->menu_ini == 1){
-			Sleep(10);
+			Sleep((snk->speed));
 			refresh(tela,snk,f);
 			frame(tela);
 			verifica_tecla(snk,painel);
@@ -67,28 +67,6 @@ int main(){
 			
 			
 	}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	
-	
-	
-	/*
-	*/
-	
-	
 	
 	return 0;
 }
-
